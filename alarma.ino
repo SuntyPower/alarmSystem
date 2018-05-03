@@ -28,8 +28,8 @@ boolean BUZZER = false; //activar -desactivar bocina
 int alarmStatus = 0;
 int alarmActive = 0;
 //LED pines
-byte redLed = 21;
-byte greenLed = 22;
+byte redLed = D10;
+byte greenLed = D9;
 //PIR pines
 byte pir1 = D4;
 //puertas pines
@@ -37,7 +37,7 @@ byte pir1 = D4;
 //ventanas pines
 // int ventana1 = 38;
 // //buzzer pines
- byte buzzer = 12;
+ //byte buzzer = D12;
  int counter=0;
 void setup() {
 
@@ -53,7 +53,7 @@ void setup() {
   pinMode(redLed, OUTPUT); //luz roja
   pinMode(greenLed, OUTPUT); //luz verda
 
-  pinMode(buzzer,OUTPUT);
+  //pinMode(buzzer,OUTPUT);
 
   pinMode(pir1, INPUT); //Cocina
 
@@ -64,7 +64,7 @@ void setup() {
   digitalWrite(redLed, LOW); //alarma activada
   digitalWrite(greenLed, HIGH); //alarma desactivada
 
-  digitalWrite(buzzer, LOW); //sirena
+  //digitalWrite(buzzer, LOW); //sirena
   keypad.setHoldTime(1000);
   keypad.addEventListener(keypadEvent);
    Serial.println("finish setup");
@@ -105,7 +105,7 @@ keypad.getKey();
 
 void alarmTriggered(){
   digitalWrite(greenLed,LOW);
-  digitalWrite(buzzer, HIGH);
+//  digitalWrite(buzzer, HIGH);
   digitalWrite(redLed, HIGH);
 //
   password.reset();
@@ -218,12 +218,12 @@ void alarmDetectScreen(String s) {
 
 
 void enableSiren() {
-  digitalWrite(buzzer, HIGH);
+//  digitalWrite(buzzer, HIGH);
   BUZZER = true;
 }
 
 void disableSiren() {
-  digitalWrite(buzzer, LOW);
+//  digitalWrite(buzzer, LOW);
   BUZZER = false;
 }
 
@@ -325,7 +325,7 @@ void alarmDesactivateScreen() {
 }
 
 void resetSensors(){
-  digitalWrite(buzzer,LOW);
+//  digitalWrite(buzzer,LOW);
   PUERTA1=false;
   PIR1=false;
 }

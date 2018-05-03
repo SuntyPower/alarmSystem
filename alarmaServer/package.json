@@ -1,0 +1,24 @@
+{
+  "name": "alarmaserver",
+  "version": "0.0.1",
+  "description": "servidor para recibir post de alarma",
+  "main": "index.js",
+  "scripts": {
+    "lint": "standard",
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "NerVans",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "defaults": "^1.0.3",
+    "express": "^4.16.3",
+    "mysql": "^2.15.0",
+    "mysql2": "^1.5.3",
+    "sequelize": "^4.37.6"
+  },
+  "devDependencies": {
+    "standard": "^11.0.1"
+  }
+}
