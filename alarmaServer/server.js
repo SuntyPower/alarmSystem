@@ -9,15 +9,17 @@ const config = {
   database: 'admin_test1',
   username: 'admin_guille',
   password:  'guille',
-  host:  '192.168.1.106',
+  host:  '192.168.1.109',
   dialect: 'mysql'
 }
 
 const Device = await db(config).catch(err => {console.log(err)})
 
 const device= Device.createOrUpdate({
-  username: "guille",
-  zone:"cocina"
+  uuid: "guille",
+  zones: 3,
+  version:2,
+  state: 1
 })
 
 

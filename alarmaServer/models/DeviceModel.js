@@ -9,24 +9,18 @@ module.exports = function setupDatabase (config) {
   const sequelize = setupDb(config)
 
 
-  sequelize.define('device', {
-    username: {
-      type: Sequelize.STRING
-      },
-    zone: {
-      type: Sequelize.STRING
-    }
-    })
-
-
-return sequelize.define('device', {
-  username: {
+return sequelize.define('device',{
+  uuid:{
     type: Sequelize.STRING
-    },
-  zone: {
-    type: Sequelize.STRING
+  },
+  zones:{
+    type: Sequelize.INTEGER
+  },
+  version:{
+    type: Sequelize.INTEGER
+  },
+  state:{
+    type: Sequelize.INTEGER
   }
-  })
-
-
+})
 }

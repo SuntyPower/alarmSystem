@@ -3,10 +3,10 @@
 module.exports = function setupDevice (DeviceModel) {
 
 
-  function findByZone (zone) {
+  function findByZone (zones) {
     return DeviceModel.findByAll({
       where:{
-        zone
+        zones
       }
     })
   }
@@ -15,24 +15,17 @@ module.exports = function setupDevice (DeviceModel) {
     return DeviceModel.findAll()
   }
 
-  function findByUsername (username) {
-    return DeviceModel.findAll({
-      where: {
-        username
-      }
-    })
-  }
 
   async function createOrUpdate (device) {
     const cond = {
       where: {
-        username: device.username
+        uuid: device.uuid
       }
     }
 
-    const existingAgent = await DeviceModel.findOne(cond)
+    const existingDevice = await DeviceModel.findOne(cond)
 
-    if (existingAgent) {
+    if (existingDevice) {
       const updated = await DeviceModel.update(device, cond)
       return updated ? DeviceModel.findOne(cond) : existingAgent
     }
@@ -44,7 +37,6 @@ module.exports = function setupDevice (DeviceModel) {
   return {
     findByZone,
     findAll,
-    findByUsername,
     createOrUpdate
 
   }
