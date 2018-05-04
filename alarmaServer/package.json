@@ -21,6 +21,7 @@
     "socket.io": "^2.1.0"
   },
   "devDependencies": {
+    "gentelella": "^1.4.0",
     "random-js": "^1.0.8",
     "standard": "^11.0.1"
   }

@@ -67,6 +67,7 @@ app.post('/api/posts',async function(req, res){
     const state = req.body.state
 
     console.log(`${uuid} ${zones} ${version} ${state} sucess!`)
+
     const device = await Device.create({
       uuid,
       zones,
@@ -74,8 +75,8 @@ app.post('/api/posts',async function(req, res){
       state
     }).catch(handleFatalError)
 
-    io.emit('new Device', device)
-
+    io.emit('device', device)
+    res.send("post ok y nervo se la come doblada")
 
 });
 
