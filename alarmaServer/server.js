@@ -1,30 +1,40 @@
 const express    = require('express');
 const app        = express();
 const bodyParser = require('body-parser');
-const db = require('./')
+const db = require('./db')
+const uuid = require('uuid/v1')
+//for test
+const random = require('random-js')()
+const http = require('http').Server(app)
+const io = require('socket.io')(http)
 
 run()
-async function run (){
-const config = {
-  database: 'admin_test1',
-  username: 'admin_guille',
-  password:  'guille',
-  host:  '192.168.1.109',
-  dialect: 'mysql'
-}
 
-const Device = await db(config).catch(err => {console.log(err)})
+async function run () {
+  const config = {
+    database: process.env.DB_NAME || 'alarm',
+      username: process.env.DB_USER || 'root',
+      password: process.env.DB_PASS || 'ieochj28',
+      host: process.env.DB_HOST || 'localhost',
+      dialect: 'mysql'
+  }
 
-const device= Device.createOrUpdate({
-  uuid: "guille",
-  zones: 3,
-  version:2,
-  state: 1
-})
+const {Device,Report} = await db(config).catch(err => {console.log(err)})
+
+const device= await Device.create({
+  uuid: uuid(),
+  zones: random.integer(1,10),
+  version:0,
+  state: random.integer(1,4)
+}).catch(handleFatalError)
+
+
+console.log("\n\nMis Dispositivos son\n");
+const devices= await Device.findAll().catch(handleFatalError)
+console.log(devices);
 
 
 
-console.log(device);
 
 
 
@@ -38,21 +48,35 @@ app.use(express.static('public'));
 
 app.get('/', function (req, res) {
 
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile('/index.html');
 
 });
 
 
-app.post('/api/posts', function(req, res){
 
-    const username=req.body.username;
-    const zone=req.body.zone;
+io.on('connection',async function(socket){
+  const devices= await Device.findAll().catch(handleFatalError)
+    io.emit('devices', devices)
+});
 
-    res.send(`${username} ${zone} sucess!`);
-    Device.createOrUpdate({
-      username,
-      zone
-    })
+
+app.post('/api/posts',async function(req, res){
+    const uuid=req.body.uuid
+    const zones=req.body.zones
+    const version= req.body.version
+    const state = req.body.state
+
+    console.log(`${uuid} ${zones} ${version} ${state} sucess!`)
+    const device = await Device.create({
+      uuid,
+      zones,
+      version,
+      state
+    }).catch(handleFatalError)
+
+    io.emit('new Device', device)
+
+
 });
 
 function handleFatalError (err) {
@@ -62,8 +86,7 @@ function handleFatalError (err) {
 }
 
 //connection.end();
-app.listen(3000, function () {
+http.listen(3000, function () {
 console.log('Example app listening on port 3000');
 });
-
 }
