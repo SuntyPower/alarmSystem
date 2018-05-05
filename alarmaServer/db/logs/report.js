@@ -40,7 +40,7 @@ module.exports = function setupReport (DeviceModel , ReportModel) {
       })
     }
 
-    async function create (uuid, report) {
+    async function report (uuid, report) {
       const device = await DeviceModel.findOne({
         where: { uuid }
       })
@@ -54,6 +54,7 @@ module.exports = function setupReport (DeviceModel , ReportModel) {
 
     return {
       create,
+      report,
       findByDeviceUuid,
       findByTypeDeviceUuid
     }

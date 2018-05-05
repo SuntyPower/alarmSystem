@@ -9,10 +9,10 @@ setup()
 async function setup (){
 
 const config = {
-  database: process.env.DB_NAME || 'alarm',
-    username: process.env.DB_USER || 'root',
-    password: process.env.DB_PASS || 'ieochj28',
-    host: process.env.DB_HOST || 'localhost',
+  database: process.env.DB_NAME || 'alarma_database',
+    username: process.env.DB_USER || 'guille',
+    password: process.env.DB_PASS || '886432077',
+    host: process.env.DB_HOST || 'claragestion.com',
     dialect: 'mysql',
     setup: true
 }

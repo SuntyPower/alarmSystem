@@ -53,12 +53,23 @@ async function create(device) {
     return result.toJSON()
   }
 
+
+  function findByUuid(uuid) {
+    return DeviceModel({
+      where:{
+      uuid
+    }})
+
+  }
+
+
   return {
     findZones,
     findByVersion,
     findByState,
     findAll,
     update,
+    findByUuid,
     create
   }
 }
