@@ -23,7 +23,7 @@ const {Device,Report} = await db(config).catch(err => {console.log(err)})
 
 const device= await Device.create({
   uuid: uuid(),
-  zones: random.integer(1,10),
+  zones: random.integer(1,4),
   version:0,
   state: random.integer(1,4)
 }).catch(handleFatalError)
@@ -43,21 +43,30 @@ app.use(bodyParser.urlencoded({extended: false}));
 //app.use(express.json());
 //app.use(express.urlencoded());
 //app.use(app.router);
-app.use(express.static('public'));
+app.use('/', express.static(__dirname + '/node_modules/gentelella/production/'));
+app.use('/', express.static(__dirname + '/node_modules/gentelella'));
 
 
 app.get('/', function (req, res) {
 
-    res.sendFile('/index.html');
+    res.sendFile('/index2.html');
 
 });
+
+
+
+
 
 
 
 io.on('connection',async function(socket){
   const devices= await Device.findAll().catch(handleFatalError)
     io.emit('devices', devices)
+//    updateTime().catch(handleFatalError)
 });
+
+
+
 
 
 app.post('/api/posts',async function(req, res){
