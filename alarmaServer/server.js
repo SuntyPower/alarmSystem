@@ -3,10 +3,12 @@ const app        = express();
 const bodyParser = require('body-parser');
 const db = require('./db')
 const uuid = require('uuid/v1')
-//for test
-const random = require('random-js')()
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
+const port = 3000;
+
+//for test
+const random = require('random-js')()
 //const server= http.createServer(app)
 
 
@@ -136,7 +138,7 @@ function handleFatalError (err) {
 }
 
 //connection.end();
-http.listen(3000, function () {
+http.listen(port, function () {
 console.log('Example app listening on port 3000');
 });
 }
