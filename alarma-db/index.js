@@ -14,7 +14,7 @@ const setupUserModel = require('./models/UserModel')
 
 //Import Function of the models
 const setupDevice = require('./logs/device')
-const setupReport = require('./logs/user')
+const setupReport = require('./logs/report')
 const setupUser = require('./logs/user')
 
 

@@ -54,11 +54,16 @@ async function create(device) {
   }
 
 
-  function findByUuid(uuid) {
-    return DeviceModel({
+  async function findByUuid(uuid) {
+  try {
+    return DeviceModel.findOne({
       where:{
-      uuid
-    }})
+        uuid
+      }})
+  } catch (e) {
+    return null;
+  }
+
 
   }
 
