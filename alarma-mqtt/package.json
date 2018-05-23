@@ -12,6 +12,7 @@
   "dependencies": {
     "alarma-db": "file:../alarma-db",
     "mosca": "^2.8.1",
+    "npm": "^6.0.1",
     "redis": "^2.8.0"
   },
   "devDependencies": {

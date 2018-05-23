@@ -2,6 +2,8 @@
 #include <ESP8266WiFi.h>
 #include <Password.h>   //https://playground.arduino.cc/Code/Password
 #include <Keypad.h>
+#include <PubSubClient.h>
+
 const byte n_rows = 4;
 const byte n_cols = 4;
 
@@ -20,8 +22,7 @@ Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, n_rows, n_cols);
 //bollean for check password
 boolean PUERTA1=false;
 boolean PIR1=false;
-const char* username="NodeMcu-1";
-const char* pirName="COCINA";
+const char* uuid="NodeMcu-1";
 Password password = Password( "1234" );
 int passwd_pos = 15;
 boolean BUZZER = false; //activar -desactivar bocina
@@ -39,6 +40,8 @@ byte pir1 = D4;
 // //buzzer pines
  //byte buzzer = D12;
  int counter=0;
+ const char* mqttServer = "m11.cloudmqtt.com";
+const int mqttPort = 1883;
 void setup() {
 
   Serial.begin(115200);                                  //Serial connection
@@ -67,32 +70,40 @@ void setup() {
   //digitalWrite(buzzer, LOW); //sirena
   keypad.setHoldTime(1000);
   keypad.addEventListener(keypadEvent);
+  client.setServer(mqttServer, mqttPort);
+  client.setCallback(callback);
+
+  while (!client.connected()) {
+    Serial.println("Connecting to MQTT...");
+
+    if (client.connect("ESP8266Client")) {
+
+      Serial.println("connected");
+
+    } else {
+
+      Serial.print("failed with state ");
+      Serial.print(client.state());
+      delay(2000);
+
+    }
+}
    Serial.println("finish setup");
 }
  void loop(){
- Serial.println("loop start");
-keypad.getKey();
-  if (alarmActive == 1){
+
+   Serial.println("loop start");
+   keypad.getKey();
+   if (alarmActive == 1){
     Serial.println("alarm Active == 1");
-    // if (digitalRead(puerta1)==HIGH && !PUERTA1)
-    //  {
-    //  alarmTriggered(username,"Puerta Frontal");
-    //  hostilReport()
-    //  doorOpen("Puerta Frontal");
-    //  PUERTA1=true;
-    //
-    //  }
-    //  if (digitalRead(puerta1)==LOW && PUERTA1){
-    //     doorClosed("Puerta Frontal");
-    //      PUERTA1=false;
-    //     }
 
      if(digitalRead(pir1)==HIGH && !PIR1){
-       Serial.println("Sensor Cocina detected");
+
+       Serial.println("Sensor pir1 detected");
        alarmTriggered();
-       hostReport(username,pirName);
-       motionDetected("Sensor Cocina");
        PIR1=true;
+       mqttReport(1,PIR1,"pir");
+       motionDetected("Sensor pir1");
      }
 
      if(digitalRead(pir1)==LOW && PIR1){
@@ -112,6 +123,21 @@ void alarmTriggered(){
   alarmStatus = 1;
 }
 
+void mqttReport(int zone,boolean t,String type) {
+
+  String message=
+  "\"device\":{
+      \"uuid\":\""+uuid+"\",
+      \"version\":\""+version+"\"},
+    \"sensor\":{
+      \"zone\":\""+i+"\",
+      \"triggered\":\""+t+"\",
+      \"status\":\""+alarmStatus+"\",
+      \"type\":\""+type+"\"}"
+
+  client.publish('sensor/motion',message)
+
+}
 
 void motionEnded(String s) {
   String place = s;
@@ -122,16 +148,16 @@ void motionEnded(String s) {
   //aca iria Algun tipo de SMS o INTERNET AVISO algo a implementar.
   //
 }
+
 void motionDetected(String s) {
   String place = s;
 
   Serial.print("MOVIMIENTO DETECTADO");
-
   Serial.print("EN " + s);
   delay(2000);
-
   //aca iria Algun tipo de SMS o INTERNET AVISO algo a implementar.
   //
+
 }
 
 void doorClosed(String s) {
@@ -233,8 +259,6 @@ void newPassScreen() {
 }
 
 
-
-
 void keypadEvent(KeypadEvent eKey) {
    blink();
 
@@ -295,9 +319,9 @@ void invalidCode() // display meaasge when a invalid is entered
 }
 
 void activate(){
-alarmActive=1;
-password.reset();
-alarmActivateScreen();
+  alarmActive=1;
+  password.reset();
+  alarmActivateScreen();
 }
 
 void alarmActivateScreen() {
@@ -325,7 +349,7 @@ void alarmDesactivateScreen() {
 }
 
 void resetSensors(){
-//  digitalWrite(buzzer,LOW);
+  //  digitalWrite(buzzer,LOW);
   PUERTA1=false;
   PIR1=false;
 }
@@ -347,38 +371,3 @@ void blink(){
   digitalWrite(greenLed,HIGH);
 
   }}
-
-void hostReport(String u,String z) {
-
- String username=u;
- String zone=z;
- if(WiFi.status()== WL_CONNECTED){   //Check WiFi connection status
-
-   HTTPClient http;    //Declare object of class HTTPClient
-
-   http.begin("http://192.168.0.102:3000/api/posts");      //Specify request destination
-   http.addHeader("Content-Type", "application/json");  //Specify content-type header
-   String PostMessage = "";
-   PostMessage += "{\"username\":\"";
-   PostMessage += username;
-   PostMessage += "\",\"zone\":\"";
-   PostMessage += zone;
-   PostMessage += "\"}";
-   int httpCode = http.POST(PostMessage);   //Send the request
-   String payload = http.getString();                  //Get the response payload
-
-   Serial.println(httpCode);   //Print HTTP return code
-   Serial.println(payload);    //Print request response payload
-
-   http.end();  //Close connection
-
- }else{
-
-    Serial.println("Error in WiFi connection");
-
- }
-
-  delay(30000);  //Send a request every 30 seconds
-
-}
-
